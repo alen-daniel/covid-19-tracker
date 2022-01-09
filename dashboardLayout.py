@@ -1,9 +1,11 @@
 import dash_bootstrap_components as dbc
 from dash import html
 from dash import dcc
+import utils
 
 REGIONAL_DROPDOWN_ID = "region-dropdown"
 PROVINCE_DROPDOWN_ID = "province-dropdown"
+REGIONAL_DROPDOWN_DIV_LOADING = REGIONAL_DROPDOWN_ID + "-loading-div"
 
 
 def create_stats_column(name):
@@ -23,7 +25,7 @@ def create_stats_column(name):
     )
 
 
-def create_layout(province_dropdown_dict):
+def create_layout():
     return dbc.Container(
         [
             dbc.Row(
@@ -33,7 +35,7 @@ def create_layout(province_dropdown_dict):
                             html.H6("Select Province"),
                             dcc.Dropdown(
                                 id=PROVINCE_DROPDOWN_ID,
-                                options=province_dropdown_dict,
+                                options=utils.get_province_list(),
                                 # value=province_dropdown_dict[0]["value"]
                             )
                         ],
@@ -41,12 +43,15 @@ def create_layout(province_dropdown_dict):
                     ),
                     dbc.Col(
                         [
-                            html.H6("Select Province"),
-                            # html.Div(id=REGIONAL_DROPDOWN_ID),
-                            dcc.Dropdown(
-                                id=REGIONAL_DROPDOWN_ID,
-                                options=[],
-                                # value=province_dropdown_dict[0]["value"]
+                            html.H6("Select Health Region"),
+                            dcc.Loading(
+                                children=[
+                                    html.Div(id=REGIONAL_DROPDOWN_DIV_LOADING),
+                                    dcc.Dropdown(
+                                        id=REGIONAL_DROPDOWN_ID,
+                                        options=[]),
+                                    # value=province_dropdown_dict[0]["value"]
+                                ]
                             )
                         ],
                         width=3
