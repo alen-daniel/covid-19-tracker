@@ -2,7 +2,9 @@
 A covid-19 dashboard to visualize the state of covid-19 data in Canada's provinces and health regions.
 
 References: 
+
 Data source: https://opencovid.ca/api/
+
 Visualization inspiration: https://covid19tracker.ca/province.html
 
 ### Running the app locally

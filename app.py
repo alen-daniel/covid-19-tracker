@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc
@@ -58,10 +57,6 @@ def set_regions_value(options):
         Output('active_cases-today', 'children'),
         Output('deaths', 'children'),
         Output('deaths-today', 'children'),
-        # Output('hospitalized', 'children'),
-        # Output('hospitalized-today', 'children'),
-        # Output('hospitalized_critical', 'children'),
-        # Output('hospitalized_critical-today', 'children'),
         Output('recoveries', 'children'),
         Output('recoveries-today', 'children'),
         Output('tests', 'children'),
@@ -116,7 +111,7 @@ def update_stats(n, province, health_region):
         utils.get_summary_dict_value(summary_data, "cumulative_avaccine"))
     vaccinated_today_str = "{} today".format(
         utils.get_summary_dict_value(summary_data, "avaccine"))
-        
+
     return [
         cases_str,
         cases_today_str,
