@@ -1,3 +1,4 @@
+import logging
 import requests
 import json
 
@@ -11,12 +12,12 @@ def jprint(obj):
 def get_province_options():
     prov_query_url = "https://api.opencovid.ca/other?stat=prov"
     response = requests.get(prov_query_url)
-    print("Querying province list. Return status code: {}".format(
-        response.status_code))
+    print("Querying province list\nurl: {}\nReturn status code: {}".format(
+        prov_query_url, response.status_code))
     result_dict_list = [
         {
-            "label": "All_Provinces",
-            "value": "ALL"
+            "label": "Canada",
+            "value": 'canada'
         }
     ]
     if response.status_code is not 200:
@@ -33,7 +34,7 @@ def get_province_options():
 def get_regions_options(province):
     result_dict_list = [
         {
-            "label": "All_Regions",
+            "label": "All Regions",
             "value": 0
         }
     ]
@@ -41,8 +42,8 @@ def get_regions_options(province):
         return result_dict_list
     hr_query_url = "https://api.opencovid.ca/other?stat=hr"
     response = requests.get(hr_query_url)
-    print("Querying Health Regions list. Return status code: {}".format(
-        response.status_code))
+    print("Querying Health Regions list\nurl: {}\nReturn status code: {}".format(
+        hr_query_url, response.status_code))
     if response.status_code is not 200:
         return result_dict_list  # TODO error handling
     response_json = response.json()
@@ -54,3 +55,20 @@ def get_regions_options(province):
         result_dict["value"] = region["HR_UID"]
         result_dict_list.append(result_dict)
     return result_dict_list
+
+
+def get_summary(location, date):
+    # sample: https://api.opencovid.ca/summary?loc=AB&date=01-09-2020
+    print("Querying summary for location {} and date {}".format(location, date))
+    url = "https://api.opencovid.ca/summary?loc={}&date={}".format(location, date)
+    response = requests.get(url)
+    if response.status_code is not 200: 
+        return {"summary":[]} # TODO error handling
+    response_json = response.json()        
+    return response_json
+
+def get_summary_dict_value(summary_base_dict, key):
+    summary_dict = summary_base_dict["summary"][0]
+    if key not in summary_dict:
+        return "___"
+    return summary_dict[key]
