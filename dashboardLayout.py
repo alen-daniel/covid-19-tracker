@@ -9,6 +9,7 @@ REGIONS_DROPDOWN_ID = "region-dropdown"
 PROVINCES_DROPDOWN_ID = "province-dropdown"
 REGIONS_DROPDOWN_DIV_LOADING = REGIONS_DROPDOWN_ID + "-loading-div"
 
+
 def create_stats_column(descriptor):
     return dbc.Col(
         [
@@ -33,7 +34,7 @@ def create_stats_column(descriptor):
     )
 
 
-def create_layout():
+def create_tracker_layout():
     province_options = utils.get_province_options()
     region_options = utils.get_regions_options("ALL")
     return dbc.Container(
@@ -95,8 +96,6 @@ def create_layout():
                     create_stats_column("cases"),
                     create_stats_column("active_cases"),
                     create_stats_column("deaths"),
-                    # create_stats_column("hospitalized"),
-                    # create_stats_column("hospitalized_critical"),
                     create_stats_column("recoveries"),
                     create_stats_column("tests"),
                     create_stats_column("vaccinated"),
