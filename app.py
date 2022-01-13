@@ -8,24 +8,39 @@ from dash.dependencies import Input, Output, State
 import dashboardLayout
 import utils
 from datetime import date
+import logging
 
+FORMAT = '%(asctime)s - %(message)s'
+logging.basicConfig(level=logging.INFO, format=FORMAT)
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SIMPLEX])
 server = app.server
+
+###################################### LAYOUT DEFINITONS ##########################################
 app.layout = html.Div(
     [
         dcc.Location(
             id="url",
             refresh=False
         ),
-        html.Div(
-            id="page-content"
+        dbc.NavbarSimple(
+            children=[
+                dbc.Alert(
+                    id="status-alert",
+                    dismissable=True,
+                    is_open=False,
+                ),
+            ],
+            brand="Covid19 Tracker - Canada",
+            brand_href="#",
+            color="primary",
+            dark=True,
         ),
-        dashboardLayout.create_layout()
+        dashboardLayout.create_tracker_layout()
     ]
 )
 
-######################################### CALLBACK DEFINITONS #########################################
+####################################### CALLBACK DEFINITONS #######################################
 
 
 @app.callback(
@@ -37,6 +52,8 @@ app.layout = html.Div(
     prevent_initial_call=True
 )
 def set_regions_options(province):
+    logging.debug(
+        "Callback triggered to set region options for province {}".format(province))
     return utils.get_regions_options(province), dash.no_update
 
 
@@ -46,11 +63,16 @@ def set_regions_options(province):
     prevent_initial_call=True
 )
 def set_regions_value(options):
-    return options[0]['value']
+    first_value = options[0]['value']
+    logging.debug(
+        "Callback triggered to set region dropdown value to {}".format(first_value))
+    return first_value
 
 
 @app.callback(
     [
+        Output("status-alert", "is_open"),
+        Output("status-alert", "children"),
         Output('cases', 'children'),
         Output('cases-today', 'children'),
         Output('active_cases', 'children'),
@@ -74,11 +96,28 @@ def set_regions_value(options):
     prevent_initial_call=True
 )
 def update_stats(n, province, health_region):
-    print("Province: {}, Health Region: {}".format(province, health_region))
-    if province is 'RP' or health_region is 9999:
+    logging.debug("Callback triggered to update stats for Province: {}, "
+                  "Health Region: {}".format(province, health_region))
+    if province == 'RP' or health_region == 9999:
         error_msg = "Querying for province code {} and/or health_region " \
             "code {} is not supported".format(province, health_region)
-        # TODO this is not being displayed
+        no_data_str = "___"
+        return [
+            True,
+            error_msg,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+            no_data_str,
+        ]
     location = None
     if health_region is 0:
         location = province
@@ -113,6 +152,8 @@ def update_stats(n, province, health_region):
         utils.get_summary_dict_value(summary_data, "avaccine"))
 
     return [
+        True,
+        "Success!",
         cases_str,
         cases_today_str,
         active_cases_str,
